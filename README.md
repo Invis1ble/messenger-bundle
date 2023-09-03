@@ -1,7 +1,7 @@
 MessengerBundle
 ==================
 
-The `MessengerBundle` provides integration of the `invis1ble/messenger` library into the Symfony framework.
+The `MessengerBundle` provides integration of the [invis1ble/messenger](https://github.com/Invis1ble/messenger) library into the Symfony framework.
 
 Installation
 ------------
