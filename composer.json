@@ -24,7 +24,7 @@
     "require": {
         "php": ">=8.1",
         "invis1ble/messenger": "^1.0",
-        "symfony/http-kernel": "7.0.x-dev"
+        "symfony/http-kernel": "^6.3"
     },
     "autoload": {
         "psr-4": {
