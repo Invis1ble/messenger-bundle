@@ -8,13 +8,19 @@
         <!-- Default configuration for services in *this* file -->
         <defaults autowire="true" autoconfigure="true" />
 
-        <service id="Invis1ble\Messenger\Command\CommandBus"/>
+        <service id="Invis1ble\Messenger\Command\CommandBus">
+            <argument type="service" id="messenger.bus.command"/>
+        </service>
         <service id="Invis1ble\Messenger\Command\CommandBusInterface" alias="Invis1ble\Messenger\Command\CommandBus"/>
 
-        <service id="Invis1ble\Messenger\Event\EventBus"/>
+        <service id="Invis1ble\Messenger\Event\EventBus">
+            <argument type="service" id="messenger.bus.event.async"/>
+        </service>
         <service id="Invis1ble\Messenger\Event\EventBusInterface" alias="Invis1ble\Messenger\Event\EventBus"/>
 
-        <service id="Invis1ble\Messenger\Query\QueryBus"/>
+        <service id="Invis1ble\Messenger\Query\QueryBus">
+            <argument type="service" id="messenger.bus.query"/>
+        </service>
         <service id="Invis1ble\Messenger\Query\QueryBusInterface" alias="Invis1ble\Messenger\Query\QueryBus"/>
 
     </services>

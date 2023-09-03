@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:framework="http://symfony.com/schema/dic/symfony"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd
+        http://symfony.com/schema/dic/symfony
+        https://symfony.com/schema/dic/symfony/symfony-1.0.xsd">
+
+    <framework:config>
+        <framework:messenger default-bus="messenger.bus.command">
+            <framework:routing message-class="Invis1ble\Messenger\Event\EventInterface">
+                <framework:sender service="async"/>
+            </framework:routing>
+
+            <framework:transport name="async" dsn="%env(MESSENGER_TRANSPORT_DSN)%">
+                <framework:retry-strategy max-retries="3" delay="1000" multiplier="2" max-delay="0"/>
+            </framework:transport>
+
+            <framework:bus name="messenger.bus.command">
+                <framework:default-middleware enabled="false"/>
+                <framework:middleware id="handle_message"/>
+            </framework:bus>
+            <framework:bus name="messenger.bus.query">
+                <framework:default-middleware enabled="false"/>
+                <framework:middleware id="handle_message"/>
+            </framework:bus>
+            <framework:bus name="messenger.bus.event.async"/>
+        </framework:messenger>
+    </framework:config>
+</container>
