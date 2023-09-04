@@ -33,5 +33,8 @@
             "Invis1ble\\MessengerBundle\\": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^10.4@dev"
+    }
 }
