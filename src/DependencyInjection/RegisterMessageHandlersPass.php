@@ -14,14 +14,22 @@ class RegisterMessageHandlersPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
+        $messageHandlerTag = 'messenger.message_handler';
+
         foreach ([
             CommandHandlerInterface::class => 'messenger.bus.command',
             QueryHandlerInterface::class => 'messenger.bus.query',
             EventHandlerInterface::class => 'messenger.bus.event.async',
         ] as $handler => $bus) {
-            $container->registerForAutoconfiguration($handler)
+            $definition = $container->registerForAutoconfiguration($handler);
+
+            if ($definition->hasTag($messageHandlerTag)) {
+                return;
+            }
+
+            $definition
                 ->setPublic(true)
-                ->addTag('messenger.message_handler', ['bus' => $bus])
+                ->addTag($messageHandlerTag, ['bus' => $bus])
             ;
         }
     }
