@@ -14,9 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class RegisterMessageHandlersPassTest extends TestCase
 {
-    #[DataProvider('processDataProvider')]
+    #[DataProvider('provideHandlerAndCorrespondingMessageBus')]
     public function testProcess(
-        string $fqcn,
+        string $handlerClassName,
         string $bus,
         string $tag = 'messenger.message_handler',
     ): void {
@@ -26,15 +26,23 @@ class RegisterMessageHandlersPassTest extends TestCase
 
         $definitions = $container->getAutoconfiguredInstanceof();
 
-        $this->assertArrayHasKey($fqcn, $definitions, sprintf('Interface "%s" is not autoconfigured.', $fqcn));
+        $this->assertArrayHasKey(
+            $handlerClassName,
+            $definitions,
+            sprintf('Interface "%s" is not autoconfigured.', $handlerClassName),
+        );
         $this->assertTrue(
-            $definitions[$fqcn]->hasTag($tag),
-            sprintf('Interface "%s" must be tagged as "%s".', $fqcn, $tag),
+            $definitions[$handlerClassName]->hasTag($tag),
+            sprintf('Interface "%s" must be tagged as "%s".', $handlerClassName, $tag),
         );
 
-        $tag = $definitions[$fqcn]->getTag($tag)[0];
+        $tag = $definitions[$handlerClassName]->getTag($tag)[0];
 
-        $this->assertArrayHasKey('bus', $tag, sprintf('Interface "%s" tag must have attribute "bus".', $fqcn));
+        $this->assertArrayHasKey(
+            'bus',
+            $tag,
+            sprintf('Interface "%s" tag must have attribute "bus".', $handlerClassName),
+        );
         $this->assertSame(
             $bus,
             $tag['bus'],
@@ -42,9 +50,32 @@ class RegisterMessageHandlersPassTest extends TestCase
         );
     }
 
-    public static function processDataProvider(): array
+    #[DataProvider('provideHandlerAndCorrespondingMessageBus')]
+    public function testAddMessageHandlerTagOnlyOnce(
+        string $handlerClassName,
+        string $bus,
+    ): void {
+        $container = new ContainerBuilder();
+
+        $container->registerForAutoconfiguration($handlerClassName)
+            ->setPublic(true)
+            ->addTag('messenger.message_handler', ['bus' => $bus])
+        ;
+
+        $this->process($container);
+
+        $definitions = $container->getAutoconfiguredInstanceof();
+        $tag = $definitions[$handlerClassName]->getTag('messenger.message_handler');
+
+        $this->assertSame([['bus' => $bus]], $tag);
+    }
+
+    /**
+     * @return \Generator<array<string, string>>
+     */
+    public static function provideHandlerAndCorrespondingMessageBus(): \Generator
     {
-        return [
+        yield from [
             [CommandHandlerInterface::class, 'messenger.bus.command'],
             [QueryHandlerInterface::class, 'messenger.bus.query'],
             [EventHandlerInterface::class, 'messenger.bus.event.async'],
