@@ -33,6 +33,20 @@ jobs:
       -
         name: Install Dependencies
         run: docker compose exec -T php composer install -vvv --no-ansi --no-interaction
+      -
+        name: Check Code Quality via PHP_CodeSniffer
+        run: docker compose exec -T php bin/php_codesniffer
+      -
+        name: Check Code Quality via PHP-CS-Fixer
+        run: docker compose exec -T php bin/php-cs-fixer
+      -
+        name: Execute tests via PHPUnit
+        run: docker compose exec -T php vendor/bin/phpunit --coverage-clover var/log/coverage-clover.xml
+      -
+        name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
   lint:
     name: Docker Lint
     runs-on: ubuntu-latest
