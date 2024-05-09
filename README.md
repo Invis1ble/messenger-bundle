@@ -60,6 +60,20 @@ Development
 4. Run `docker compose exec php composer install` to install dependencies
 5. Run `docker compose down --remove-orphans` to stop the Docker containers.
 
+### Check for Coding Standards violations
+
+Run PHP_CodeSniffer checks:
+
+```sh
+docker compose exec -it php bin/php_codesniffer
+```
+
+Run PHP-CS-Fixer checks:
+
+```sh
+docker compose exec -it php bin/php-cs-fixer
+```
+
 
 License
 -------
