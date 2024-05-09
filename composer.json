@@ -1,6 +1,6 @@
 {
     "name": "invis1ble/messenger-bundle",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "type": "symfony-bundle",
     "description": "Symfony Bundle for the Bus and Message Interfaces and Implementations.",
     "authors": [
