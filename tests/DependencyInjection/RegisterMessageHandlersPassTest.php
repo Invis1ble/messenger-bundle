@@ -8,14 +8,13 @@ use Invis1ble\Messenger\Command\CommandHandlerInterface;
 use Invis1ble\Messenger\Event\EventHandlerInterface;
 use Invis1ble\Messenger\Query\QueryHandlerInterface;
 use Invis1ble\MessengerBundle\DependencyInjection\RegisterMessageHandlersPass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class RegisterMessageHandlersPassTest extends TestCase
 {
-    /**
-     * @dataProvider processDataProvider
-     */
+    #[DataProvider('processDataProvider')]
     public function testProcess(
         string $fqcn,
         string $bus,

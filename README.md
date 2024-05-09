@@ -2,6 +2,7 @@ MessengerBundle
 ==================
 
 ![CI Status](https://github.com/Invis1ble/messenger-bundle/actions/workflows/ci.yml/badge.svg?event=push)
+[![Code Coverage](https://codecov.io/gh/Invis1ble/messenger-bundle/graph/badge.svg?token=K7S3BXER5K)](https://codecov.io/gh/Invis1ble/messenger-bundle)
 [![Packagist](https://img.shields.io/packagist/v/Invis1ble/messenger-bundle.svg)](https://packagist.org/packages/Invis1ble/messenger-bundle)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
@@ -72,6 +73,23 @@ Run PHP-CS-Fixer checks:
 
 ```sh
 docker compose exec -it php bin/php-cs-fixer
+```
+
+
+Testing
+-------
+
+To run Unit tests during development
+
+```sh
+docker compose exec php vendor/bin/phpunit
+```
+
+To run with coverage
+
+```sh
+XDEBUG_MODE=coverage docker compose up -d --wait
+docker compose exec php vendor/bin/phpunit --coverage-clover var/log/coverage-clover.xml
 ```
 
 
