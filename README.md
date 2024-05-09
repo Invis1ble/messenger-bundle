@@ -1,7 +1,12 @@
 MessengerBundle
 ==================
 
+![CI Status](https://github.com/Invis1ble/messenger-bundle/actions/workflows/ci.yml/badge.svg?event=push)
+[![Packagist](https://img.shields.io/packagist/v/Invis1ble/messenger-bundle.svg)](https://packagist.org/packages/Invis1ble/messenger-bundle)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 The `MessengerBundle` provides integration of the [invis1ble/messenger](https://github.com/Invis1ble/messenger) library into the Symfony framework.
+
 
 Installation
 ------------
@@ -42,6 +47,19 @@ return [
     Invis1ble\MessengerBundle\Invis1bleMessengerBundle::class => ['all' => true],
 ];
 ```
+
+
+Development
+-----------
+
+### Getting started
+
+1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
+2. Run `docker compose build --no-cache` to build fresh images
+3. Run `docker compose up -d --wait` to start the Docker containers
+4. Run `docker compose exec php composer install` to install dependencies
+5. Run `docker compose down --remove-orphans` to stop the Docker containers.
+
 
 License
 -------
