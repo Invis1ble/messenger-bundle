@@ -1,6 +1,10 @@
 MessengerBundle
 ==================
 
+![CI Status](https://github.com/Invis1ble/messenger-bundle/actions/workflows/ci.yml/badge.svg?event=push)
+[![Packagist](https://img.shields.io/packagist/v/Invis1ble/messenger-bundle.svg)](https://packagist.org/packages/Invis1ble/messenger-bundle)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 The `MessengerBundle` provides integration of the [invis1ble/messenger](https://github.com/Invis1ble/messenger) library into the Symfony framework.
 
 Installation
