@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DependencyInjection;
+namespace Invis1ble\MessengerBundle\Tests\DependencyInjection;
 
 use Invis1ble\Messenger\Command\CommandHandlerInterface;
 use Invis1ble\Messenger\Event\EventHandlerInterface;

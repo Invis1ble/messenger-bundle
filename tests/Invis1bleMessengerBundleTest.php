@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Invis1ble\MessengerBundle\Tests;
+
 use Invis1ble\MessengerBundle\DependencyInjection\RegisterMessageHandlersPass;
 use Invis1ble\MessengerBundle\Invis1bleMessengerBundle;
 use PHPUnit\Framework\TestCase;
