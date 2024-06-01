@@ -4,87 +4,52 @@ declare(strict_types=1);
 
 namespace Invis1ble\MessengerBundle\Tests\DependencyInjection;
 
-use Invis1ble\Messenger\Command\CommandHandlerInterface;
-use Invis1ble\Messenger\Event\EventHandlerInterface;
-use Invis1ble\Messenger\Query\QueryHandlerInterface;
 use Invis1ble\MessengerBundle\DependencyInjection\RegisterMessageHandlersPass;
+use Invis1ble\MessengerBundle\Tests\MessageHandler\TestCommandHandler;
+use Invis1ble\MessengerBundle\Tests\MessageHandler\TestEventHandler;
+use Invis1ble\MessengerBundle\Tests\MessageHandler\TestQueryHandler;
+use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 
-class RegisterMessageHandlersPassTest extends TestCase
+class RegisterMessageHandlersPassTest extends AbstractCompilerPassTestCase
 {
-    #[DataProvider('provideHandlerAndCorrespondingMessageBus')]
-    public function testProcess(
-        string $handlerClassName,
-        string $bus,
-        string $tag = 'messenger.message_handler',
-    ): void {
-        $container = new ContainerBuilder();
-
-        $this->process($container);
-
-        $definitions = $container->getAutoconfiguredInstanceof();
-
-        $this->assertArrayHasKey(
-            $handlerClassName,
-            $definitions,
-            sprintf('Interface "%s" is not autoconfigured.', $handlerClassName),
-        );
-        $this->assertTrue(
-            $definitions[$handlerClassName]->hasTag($tag),
-            sprintf('Interface "%s" must be tagged as "%s".', $handlerClassName, $tag),
-        );
-
-        $tag = $definitions[$handlerClassName]->getTag($tag)[0];
-
-        $this->assertArrayHasKey(
-            'bus',
-            $tag,
-            sprintf('Interface "%s" tag must have attribute "bus".', $handlerClassName),
-        );
-        $this->assertSame(
-            $bus,
-            $tag['bus'],
-            sprintf('Command handler definition tag attribute "bus" must be "%s".', $bus),
-        );
-    }
-
-    #[DataProvider('provideHandlerAndCorrespondingMessageBus')]
-    public function testAddMessageHandlerTagOnlyOnce(
-        string $handlerClassName,
+    #[DataProvider('provideHandlerAndCorrespondingBus')]
+    public function testMessageHandlerTagged(
+        string $handlerFqn,
         string $bus,
     ): void {
-        $container = new ContainerBuilder();
+        $definition = new Definition();
+        $definition->setAutoconfigured(true);
+        $this->setDefinition($handlerFqn, $definition);
 
-        $container->registerForAutoconfiguration($handlerClassName)
-            ->setPublic(true)
-            ->addTag('messenger.message_handler', ['bus' => $bus])
-        ;
+        $this->compile();
 
-        $this->process($container);
-
-        $definitions = $container->getAutoconfiguredInstanceof();
-        $tag = $definitions[$handlerClassName]->getTag('messenger.message_handler');
-
-        $this->assertSame([['bus' => $bus]], $tag);
+        $this->assertContainerBuilderHasServiceDefinitionWithTag(
+            $handlerFqn,
+            'messenger.message_handler',
+            ['bus' => $bus],
+        );
     }
 
     /**
      * @return \Generator<array<string, string>>
      */
-    public static function provideHandlerAndCorrespondingMessageBus(): \Generator
+    public static function provideHandlerAndCorrespondingBus(): iterable
     {
-        yield from [
-            [CommandHandlerInterface::class, 'messenger.bus.command'],
-            [QueryHandlerInterface::class, 'messenger.bus.query'],
-            [EventHandlerInterface::class, 'messenger.bus.event.async'],
-        ];
+        yield [TestCommandHandler::class, 'messenger.bus.command'];
+        yield [TestQueryHandler::class, 'messenger.bus.query'];
+        yield [TestEventHandler::class, 'messenger.bus.event.async'];
     }
 
-    protected function process(ContainerBuilder $container): void
+    protected function registerCompilerPass(ContainerBuilder $container): void
     {
-        (new RegisterMessageHandlersPass())
-            ->process($container);
+        $container->addCompilerPass(
+            new RegisterMessageHandlersPass(),
+            PassConfig::TYPE_BEFORE_OPTIMIZATION,
+            99999,
+        );
     }
 }
