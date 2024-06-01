@@ -8,11 +8,7 @@
         https://symfony.com/schema/dic/symfony/symfony-1.0.xsd">
 
     <framework:config>
-        <framework:messenger default-bus="messenger.bus.command">
-            <framework:routing message-class="Invis1ble\Messenger\Event\EventInterface">
-                <framework:sender service="async"/>
-            </framework:routing>
-
+        <framework:messenger default-bus="messenger.bus.event.async">
             <framework:transport name="async" dsn="%env(MESSENGER_TRANSPORT_DSN)%">
                 <framework:retry-strategy max-retries="3" delay="1000" multiplier="2" max-delay="0"/>
             </framework:transport>

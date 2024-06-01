@@ -21,14 +21,8 @@ class RegisterMessageHandlersPass implements CompilerPassInterface
             QueryHandlerInterface::class => 'messenger.bus.query',
             EventHandlerInterface::class => 'messenger.bus.event.async',
         ] as $handler => $bus) {
-            $definition = $container->registerForAutoconfiguration($handler);
-
-            if ($definition->hasTag($messageHandlerTag)) {
-                return;
-            }
-
-            $definition
-                ->setPublic(true)
+            $container->registerForAutoconfiguration($handler)
+                ->clearTag($messageHandlerTag)
                 ->addTag($messageHandlerTag, ['bus' => $bus])
             ;
         }
