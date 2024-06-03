@@ -60,7 +60,7 @@ class Invis1bleMessengerBundleTest extends AbstractExtensionTestCase
     }
 
     /**
-     * @return \Generator<array<string, string>>
+     * @return \Generator<string[]>
      */
     public static function provideBus(): iterable
     {
