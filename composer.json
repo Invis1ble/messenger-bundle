@@ -1,6 +1,5 @@
 {
     "name": "invis1ble/messenger-bundle",
-    "version": "4.0.0",
     "type": "symfony-bundle",
     "description": "Symfony Bundle for the Bus and Message Interfaces and Implementations.",
     "authors": [
