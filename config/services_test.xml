@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true" />
+
+        <service id="Invis1ble\Messenger\Command\TraceableCommandBus"
+                 decorates="Invis1ble\Messenger\Command\CommandBus" />
+
+        <service id="Invis1ble\Messenger\Command\CommandBusInterface"
+                 alias="Invis1ble\Messenger\Command\TraceableCommandBus" />
+
+        <service id="Invis1ble\Messenger\Event\TraceableEventBus"
+                 decorates="Invis1ble\Messenger\Event\EventBus" />
+
+        <service id="Invis1ble\Messenger\Event\EventBusInterface"
+                 alias="Invis1ble\Messenger\Event\TraceableEventBus" />
+
+        <service id="Invis1ble\Messenger\Query\TraceableQueryBus"
+                 decorates="Invis1ble\Messenger\Query\QueryBus" />
+
+        <service id="Invis1ble\Messenger\Query\QueryBusInterface"
+                 alias="Invis1ble\Messenger\Query\TraceableQueryBus" />
+
+    </services>
+
+</container>

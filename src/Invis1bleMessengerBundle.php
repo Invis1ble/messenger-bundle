@@ -25,6 +25,10 @@ class Invis1bleMessengerBundle extends AbstractBundle
         ContainerBuilder $builder,
     ): void {
         $container->import('../config/services.xml');
+
+        if ('test' === $container->env()) {
+            $container->import('../config/services_test.xml');
+        }
     }
 
     public function prependExtension(
