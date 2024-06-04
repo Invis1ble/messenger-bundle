@@ -6,10 +6,13 @@ namespace Invis1ble\MessengerBundle\Tests;
 
 use Invis1ble\Messenger\Command\CommandBus;
 use Invis1ble\Messenger\Command\CommandBusInterface;
+use Invis1ble\Messenger\Command\TraceableCommandBus;
 use Invis1ble\Messenger\Event\EventBus;
 use Invis1ble\Messenger\Event\EventBusInterface;
+use Invis1ble\Messenger\Event\TraceableEventBus;
 use Invis1ble\Messenger\Query\QueryBus;
 use Invis1ble\Messenger\Query\QueryBusInterface;
+use Invis1ble\Messenger\Query\TraceableQueryBus;
 use Invis1ble\MessengerBundle\DependencyInjection\RegisterMessageHandlersPass;
 use Invis1ble\MessengerBundle\Invis1bleMessengerBundle;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
@@ -44,19 +47,30 @@ class Invis1bleMessengerBundleTest extends AbstractExtensionTestCase
     }
 
     #[DataProvider('provideBus')]
-    public function testContainerContainsBus(string $serviceFqn, string $aliasFqn, string $busName): void
-    {
+    public function testContainerContainsBus(
+        string $busFqn,
+        string $decoratedBusFqn,
+        string $busAliasFqn,
+        string $busName,
+    ): void {
         $this->load();
         $this->compile();
 
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
-            serviceId: $serviceFqn,
+            serviceId: $decoratedBusFqn,
             argumentIndex: 0,
             expectedValue: new Reference($busName),
         );
 
-        $this->assertContainerBuilderHasService($serviceFqn, $serviceFqn);
-        $this->assertContainerBuilderHasAlias($aliasFqn, $serviceFqn);
+        $this->assertContainerBuilderHasService($busFqn);
+
+        $this->assertContainerBuilderServiceDecoration(
+            serviceId: $busFqn,
+            decoratedServiceId: $decoratedBusFqn,
+        );
+
+        $this->assertContainerBuilderHasService($decoratedBusFqn);
+        $this->assertContainerBuilderHasAlias($busAliasFqn, $busFqn);
     }
 
     /**
@@ -64,9 +78,24 @@ class Invis1bleMessengerBundleTest extends AbstractExtensionTestCase
      */
     public static function provideBus(): iterable
     {
-        yield [CommandBus::class, CommandBusInterface::class, 'messenger.bus.command'];
-        yield [QueryBus::class, QueryBusInterface::class, 'messenger.bus.query'];
-        yield [EventBus::class, EventBusInterface::class, 'messenger.bus.event.async'];
+        yield [
+            TraceableCommandBus::class,
+            CommandBus::class,
+            CommandBusInterface::class,
+            'messenger.bus.command',
+        ];
+        yield [
+            TraceableQueryBus::class,
+            QueryBus::class,
+            QueryBusInterface::class,
+            'messenger.bus.query',
+        ];
+        yield [
+            TraceableEventBus::class,
+            EventBus::class,
+            EventBusInterface::class,
+            'messenger.bus.event.async',
+        ];
     }
 
     protected function setUp(): void
