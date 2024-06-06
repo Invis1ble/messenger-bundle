@@ -36,5 +36,9 @@ class Invis1bleMessengerBundle extends AbstractBundle
         ContainerBuilder $builder,
     ): void {
         $container->import('../config/packages/messenger.xml');
+
+        if ('test' === $container->env()) {
+            $container->import('../config/packages/messenger_test.xml');
+        }
     }
 }
