@@ -8,6 +8,7 @@
         https://symfony.com/schema/dic/symfony/symfony-1.0.xsd">
 
     <framework:config>
+
         <framework:messenger default-bus="messenger.bus.event.async">
             <framework:transport name="async" dsn="%env(MESSENGER_TRANSPORT_DSN)%">
                 <framework:retry-strategy max-retries="3" delay="1000" multiplier="2" max-delay="0"/>
@@ -25,5 +26,6 @@
                 <framework:default-middleware enabled="true" allow_no_handlers="true"/>
             </framework:bus>
         </framework:messenger>
+
     </framework:config>
 </container>
