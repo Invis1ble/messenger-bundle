@@ -10,7 +10,7 @@
     <framework:config>
 
         <framework:messenger>
-            <framework:transport name="async" dsn="in-memory://">
+            <framework:transport name="async" dsn="sync://">
                 <framework:retry-strategy max-retries="0" />
             </framework:transport>
         </framework:messenger>
