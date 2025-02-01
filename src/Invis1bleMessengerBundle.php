@@ -35,10 +35,58 @@ class Invis1bleMessengerBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder $builder,
     ): void {
-        $container->import('../config/packages/messenger.xml');
+        $container->extension('framework', [
+            'messenger' => [
+                'default_bus' => 'messenger.bus.event.async',
+                'transports' => [
+                    [
+                        'name' => 'async',
+                        'dsn' => '%env(MESSENGER_TRANSPORT_DSN)%',
+                        'retry_strategy' => [
+                            'max_retries' => 3,
+                            'delay' => 1000,
+                            'multiplier' => 2,
+                            'max_delay' => 0,
+                        ],
+                    ],
+                ],
+                'buses' => [
+                    'messenger.bus.command' => [
+                        'default_middleware' => [
+                            'enabled' => false,
+                        ],
+                        'middleware' => 'handle_message',
+                    ],
+                    'messenger.bus.query' => [
+                        'default_middleware' => [
+                            'enabled' => false,
+                        ],
+                        'middleware' => 'handle_message',
+                    ],
+                    'messenger.bus.event.async' => [
+                        'default_middleware' => [
+                            'enabled' => true,
+                            'allow_no_handlers' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
 
         if ('test' === $container->env()) {
-            $container->import('../config/packages/messenger_test.xml');
+            $container->extension('framework', [
+                'messenger' => [
+                    'transports' => [
+                        [
+                            'name' => 'async',
+                            'dsn' => 'sync://',
+                            'retry_strategy' => [
+                                'max_retries' => 0,
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
         }
     }
 }
