@@ -35,6 +35,10 @@ class Invis1bleMessengerBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder $builder,
     ): void {
+        if (!$builder->hasExtension('framework')) {
+            return;
+        }
+
         $container->extension('framework', [
             'messenger' => [
                 'default_bus' => 'messenger.bus.event.async',
