@@ -3,7 +3,7 @@ FROM php:8.2-cli
 ENV XDEBUG_MODE=off
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      git \
+      git=1:2.39.5-0+deb12u2 \
       unzip=6.0-28 \
     && rm -rf /var/lib/apt/lists/*
 
