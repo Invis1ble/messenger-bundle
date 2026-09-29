@@ -9,8 +9,13 @@ use Invis1ble\Messenger\Command\CommandInterface;
 
 class TestCommandHandler implements CommandHandlerInterface
 {
+    /**
+     * @var CommandInterface[]
+     */
+    public array $messages = [];
+
     public function __invoke(CommandInterface $command): void
     {
-        // do nothing
+        $this->messages[] = $command;
     }
 }

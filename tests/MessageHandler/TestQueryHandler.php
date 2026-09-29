@@ -9,8 +9,15 @@ use Invis1ble\Messenger\Query\QueryInterface;
 
 class TestQueryHandler implements QueryHandlerInterface
 {
-    public function __invoke(QueryInterface $query): void
+    /**
+     * @var QueryInterface[]
+     */
+    public array $messages = [];
+
+    public function __invoke(QueryInterface $query): string
     {
-        // do nothing
+        $this->messages[] = $query;
+
+        return 'query result';
     }
 }

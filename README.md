@@ -8,6 +8,31 @@ MessengerBundle
 
 The `MessengerBundle` provides integration of the [invis1ble/messenger](https://github.com/Invis1ble/messenger) library into the Symfony framework.
 
+Compatibility
+-------------
+
+Version 6.2 adds Symfony 8 support and requires `invis1ble/messenger` 5.1 or later
+within the 5.x series. Public bus interfaces and service IDs are unchanged.
+
+| Symfony | PHP requirement |
+| --- | --- |
+| 6.4 / 7.x | PHP 8.2+ |
+| 8.0 | PHP 8.4+ |
+| 8.1 | PHP 8.4.1+ |
+
+Stable dependencies are used by default. CI checks Symfony 6.4, 7.4, 8.0, and 8.1,
+including a real kernel, `lint:container`, and message dispatch in `prod` and `test`.
+
+To upgrade an existing Symfony 8.1 application, run Composer on PHP 8.4.1 or later:
+
+```sh
+composer require 'invis1ble/messenger-bundle:^6.2' --with-all-dependencies
+```
+
+When upgrading Symfony itself, also update the application's Symfony constraints
+and its `extra.symfony.require` setting if Symfony Flex uses it to restrict versions.
+No platform requirement bypass is needed.
+
 
 Installation
 ------------
@@ -49,6 +74,40 @@ return [
 ];
 ```
 
+Bus configuration
+-----------------
+
+Enable Symfony's FrameworkBundle and configure `MESSENGER_TRANSPORT_DSN` for the
+`async` transport. The bundle provides these services and autowired interfaces:
+
+| Bus interface | Symfony service ID | Handler interface |
+| --- | --- | --- |
+| `Invis1ble\Messenger\Command\CommandBusInterface` | `messenger.bus.command` | `Invis1ble\Messenger\Command\CommandHandlerInterface` |
+| `Invis1ble\Messenger\Query\QueryBusInterface` | `messenger.bus.query` | `Invis1ble\Messenger\Query\QueryHandlerInterface` |
+| `Invis1ble\Messenger\Event\EventBusInterface` | `messenger.bus.event.async` | `Invis1ble\Messenger\Event\EventHandlerInterface` |
+
+Register handlers as services with `autoconfigure: true` and implement the matching
+handler interface. The bundle assigns each handler to its corresponding bus; an
+additional `messenger.message_handler` tag or `#[AsMessageHandler]` is unnecessary.
+Command and query buses handle messages synchronously. The event bus is the default
+Symfony bus and permits events without handlers.
+
+Route events to the `async` transport in your application, for example:
+
+```yaml
+# config/packages/messenger.yaml
+framework:
+    messenger:
+        routing:
+            'Invis1ble\Messenger\Event\EventInterface': async
+```
+
+Consume queued events with `php bin/console messenger:consume async`. In the `test`
+environment the bundle uses `sync://` for this transport and decorates all three
+bus interfaces with traceable buses, so routed events are handled immediately.
+Application configuration can override the bundle's defaults, including transports
+and retry policies.
+
 
 Development
 -----------
@@ -60,6 +119,16 @@ Development
 3. Run `docker compose up -d --wait` to start the Docker containers
 4. Run `docker compose exec php composer install` to install dependencies
 5. Run `docker compose down --remove-orphans` to stop the Docker containers.
+
+The development image uses PHP 8.5. To use PHP 8.4, set `PHP_VERSION=8.4` for both
+the build and subsequent Compose commands. For a clean dependency resolution, use
+a fresh checkout without `vendor/` or `composer.lock`.
+
+Run all package checks:
+
+```sh
+docker compose exec -T php composer check
+```
 
 ### Check for Coding Standards violations
 

@@ -9,8 +9,13 @@ use Invis1ble\Messenger\Event\EventInterface;
 
 class TestEventHandler implements EventHandlerInterface
 {
+    /**
+     * @var EventInterface[]
+     */
+    public array $messages = [];
+
     public function __invoke(EventInterface $event): void
     {
-        // do nothing
+        $this->messages[] = $event;
     }
 }
