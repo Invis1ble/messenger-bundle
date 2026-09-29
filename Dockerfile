@@ -1,16 +1,18 @@
-FROM php:8.2-cli
+ARG PHP_VERSION=8.5
+FROM php:${PHP_VERSION}-cli-bookworm
 
 ENV XDEBUG_MODE=off
 
+# Use the security updates available for the selected Debian base image.
+# hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      git=1:2.39.5-0+deb12u2 \
-      unzip=6.0-28 \
+      git \
+      unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN bash -c '[[ -n "$(pecl list | grep xdebug)" ]]\
- || (pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug)'
+RUN pecl install xdebug-3.5.3 && docker-php-ext-enable xdebug
 
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /app
 

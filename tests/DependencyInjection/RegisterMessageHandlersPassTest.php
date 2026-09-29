@@ -32,6 +32,7 @@ class RegisterMessageHandlersPassTest extends AbstractCompilerPassTestCase
             'messenger.message_handler',
             ['bus' => $bus],
         );
+        $this->assertCount(1, $this->container->getDefinition($handlerFqn)->getTag('messenger.message_handler'));
     }
 
     /**

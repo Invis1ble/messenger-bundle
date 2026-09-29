@@ -20,11 +20,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 /**
- * В prod-окружении грузится только services.php: шины регистрируются напрямую,
- * алиасы *BusInterface указывают на сами *Bus, а Traceable*-декораторов нет.
- *
- * Тест фиксирует, что test-only декорация (services_test.php) НЕ просачивается
- * в prod — зеркало к Invis1bleMessengerBundleTest, который проверяет test-env.
+ * Production loads the regular buses without the test-only traceable decorators.
  */
 class Invis1bleMessengerBundleProdTest extends AbstractExtensionTestCase
 {
@@ -38,7 +34,7 @@ class Invis1bleMessengerBundleProdTest extends AbstractExtensionTestCase
         $this->load();
         $this->compile();
 
-        // Шина зарегистрирована напрямую и принимает соответствующую messenger-шину.
+        // Each bus wraps its corresponding Symfony Messenger bus.
         $this->assertContainerBuilderHasService($busFqn);
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(
             serviceId: $busFqn,
@@ -46,10 +42,10 @@ class Invis1bleMessengerBundleProdTest extends AbstractExtensionTestCase
             expectedValue: new Reference($busName),
         );
 
-        // Алиас интерфейса указывает на саму шину, а не на Traceable-декоратор.
+        // The interface resolves to the regular bus in production.
         $this->assertContainerBuilderHasAlias($busAliasFqn, $busFqn);
 
-        // Traceable-декоратор в prod отсутствует.
+        // Traceable decorators are only available in the test environment.
         $this->assertContainerBuilderNotHasService($traceableBusFqn);
     }
 
