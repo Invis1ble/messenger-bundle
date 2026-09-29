@@ -20,11 +20,10 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure();
 
-    // Декораторы шин: autowire подставляет декорируемую шину (.inner) в
-    // конструктор Traceable*Bus, поэтому явный аргумент не нужен — как в XML.
+    // Autowiring injects the decorated bus into each traceable bus.
     $services->set(TraceableCommandBus::class)
         ->decorate(CommandBus::class);
-    // Переопределяем алиас интерфейса на декоратор (поверх services.php).
+    // Expose the traceable decorator through the bus interface in tests.
     $services->alias(CommandBusInterface::class, TraceableCommandBus::class);
 
     $services->set(TraceableEventBus::class)
